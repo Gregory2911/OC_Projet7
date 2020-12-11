@@ -15,31 +15,37 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"collection:product", "item:product"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)     
+     * @ORM\Column(type="string", length=255)  
+     * @Groups({"collection:product", "item:product"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"collection:product", "item:product"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups("item:product")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("item:product")
      */
     private $screenSize;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups("item:product")
      */
     private $releaseDate;
 
