@@ -6,11 +6,12 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  */
-class Client
+class Client implements UserInterface
 {
     /**
      * @ORM\Id
@@ -53,6 +54,11 @@ class Client
      * @ORM\Column(type="string", length=255)
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="client")
@@ -153,6 +159,18 @@ class Client
         return $this;
     }
 
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
     /**
      * @return Collection|User[]
      */
@@ -182,4 +200,26 @@ class Client
 
         return $this;
     }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
 }
