@@ -21,9 +21,7 @@ class ProductController extends AbstractController
      */
     public function productsCollection(ProductRepository $productRepository)
     {
-
         return $this->json($productRepository->findAll(), 200, [], ['groups' => 'collection:product']);
-
     }
 
     /**
