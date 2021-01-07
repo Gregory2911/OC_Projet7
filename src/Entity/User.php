@@ -69,6 +69,7 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
+     * @Groups({"collection:user"})
      */
     private $client;
 
