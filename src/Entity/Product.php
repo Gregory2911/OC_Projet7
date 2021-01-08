@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ProductRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -22,18 +22,24 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)  
      * @Groups({"collection:product", "item:product"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min="2")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"collection:product", "item:product"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min="2")
      */
     private $brand;
 
     /**
      * @ORM\Column(type="text")
      * @Groups("item:product")
+     * @Assert\NotBlank()
+     * @Assert\Length(min="2")
      */
     private $description;
 
@@ -46,6 +52,8 @@ class Product
     /**
      * @ORM\Column(type="date")
      * @Groups("item:product")
+     * @Assert\NotBlank()
+     * @Assert\Length(min="2")
      */
     private $releaseDate;
 

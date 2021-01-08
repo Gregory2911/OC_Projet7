@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="Il existe déjà un utilisateur avec cette adresse mail")
  */
 class User
 {
@@ -22,12 +24,16 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"collection:user", "item:user"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min="2")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"collection:user", "item:user"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min="2")
      */
     private $firstName;
 
@@ -64,6 +70,10 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"item:user"})
+     * @Assert\NotBlank()
+     * @Assert\Email(
+     *     message="L'email n'est pas valide"
+     * )
      */
     private $email;
 
