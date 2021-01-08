@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * @Route("api/products")
  * 
+ * @OA\Tag(name="products")
  * @Security(name="Bearer")
  */
 class ProductController extends AbstractController
@@ -31,7 +32,6 @@ class ProductController extends AbstractController
      *     )
      * )
      * 
-     * @OA\Tag(name="list of products")
      */
     public function productsCollection(ProductRepository $productRepository)
     {
@@ -51,7 +51,6 @@ class ProductController extends AbstractController
      *     )
      * )
      * 
-     * @OA\Tag(name="details of a product")
      */
     public function productItem(Product $product)
     {

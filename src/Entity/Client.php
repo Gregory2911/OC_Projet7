@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,59 +25,41 @@ class Client implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"collection:user"})
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2")
      */
     private $adress;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2")
      */
     private $codePostal;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2")
      */
     private $town;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2")
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="2")
      */
     private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Email(
-     *     message="L'email n'est pas valide"
-     * )
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="5", message="Le mot de passe doit avoir au mininum 5 caractères.")
      */
     private $password;
 

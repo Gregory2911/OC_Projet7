@@ -3,15 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Symfony\Component\Serializer\Serializer;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,11 +19,22 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 /**
  * @Route("api/users")
+ * @OA\Tag(name="users")
+ * @Security(name="Bearer")
  */
 class UserController extends AbstractController
 {
     /**
      * @Route(name="api_users_collection_get", methods={"GET"})
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of users",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"collection:user"}))
+     *     )
+     * )
+     * 
      */
     public function usersCollection(UserRepository $userRepository)
     {
@@ -34,6 +44,21 @@ class UserController extends AbstractController
 
     /**
      * @Route("/{id}", name="api_users_item_get", methods={"GET"})
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the details of a user",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"item:user"}))
+     *     )
+     * )
+     * 
+     * @OA\Response(
+     *     response=403,
+     *     description="Cet utilisateur est lié à un autre client. Vous ne pouvez voir le détail que de vos utilisateurs."
+     * )
+     * 
+     
      */
     public function usersItem(User $user)
     {
@@ -43,7 +68,7 @@ class UserController extends AbstractController
             return $this->json(
                 [
                     "status" => 403,
-                    "Cet utilisateur est lié à un autre client. Vous ne pouvez voir le détail que de vos utilisateurs."
+                    "message" => "Cet utilisateur est lié à un autre client. Vous ne pouvez voir le détail que de vos utilisateurs."
                 ], 
                 Response::HTTP_FORBIDDEN);            
         }
@@ -51,6 +76,23 @@ class UserController extends AbstractController
 
     /**
      * @Route(name="api_users_item_post", methods={"POST"})
+     * @OA\Response(
+     *     response=201,
+     *     description="Adding a user",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"item:user"}))
+     *     )
+     * )
+     * 
+     * 
+     * @OA\Response(
+     *     response=400,
+     *     description="Error adding the user",
+     * )
+     * 
+     
+     * 
      */
     public function post(Request $request, SerializerInterface $serializer, EntityManagerInterface $manager, ValidatorInterface $validator)
     {
@@ -81,6 +123,22 @@ class UserController extends AbstractController
 
     /**
      * @Route("/{id}", name="api_users_item_put", methods={"PUT"})
+     * @OA\Response(
+     *     response=200,
+     *     description="Update a user",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"item:user"}))
+     *     )
+     * )
+     * 
+     * 
+     * @OA\Response(
+     *     response=400,
+     *     description="Error updating the user",
+     * )
+     * 
+     
      */
     public function put(User $user, Request $request, EntityManagerInterface $manager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -101,6 +159,11 @@ class UserController extends AbstractController
 
     /**
      * @Route("/{id}", name="api_users_item_delete", methods={"DELETE"})
+     * @OA\Response(
+     *     response=204,
+     *     description="delete a user",
+     * )
+     *      
      */
     public function delete(User $user, EntityManagerInterface $manager)
     {
