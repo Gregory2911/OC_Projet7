@@ -35,7 +35,22 @@ class ProductController extends AbstractController
      */
     public function productsCollection(ProductRepository $productRepository)
     {
-        return $this->json($productRepository->findAll(), 200, [], ['groups' => 'collection:product']);
+        $products = array();
+        $i = 0;
+        foreach($productRepository->findAll() as $value){
+            $product = new Product;
+            $product = $value;
+            $links = array();
+            $links = ['self' => '/api/products/' . $product->getId()];
+            $product->setLinks($links);
+            $products[$i] = $product;
+            $i++;
+        }
+
+        //dd($products);
+
+        //return $this->json($productRepository->findAll(), 200, [], ['groups' => 'collection:product']);
+        return $this->json($products, 200, [], ['groups' => 'collection:product']);
     }
 
     /**

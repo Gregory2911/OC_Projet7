@@ -58,6 +58,11 @@ class Product
      */
     private $releaseDate;
 
+    /**
+     * @Groups({"collection:product"})
+     */
+    private $links = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,6 +124,18 @@ class Product
     public function setReleaseDate(\DateTimeInterface $releaseDate): self
     {
         $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
+
+    public function getLinks(): ?array
+    {
+        return $this->links;
+    }
+
+    public function setLinks(?array $links): self
+    {
+        $this->links = $links;
 
         return $this;
     }

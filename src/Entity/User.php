@@ -84,6 +84,12 @@ class User
      */
     private $client;
 
+    /**
+     *
+     * @Groups({"collection:user", "item:user"})
+     */
+    private $links = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -193,6 +199,18 @@ class User
     public function setClient(?Client $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getLinks(): ?array
+    {
+        return $this->links;
+    }
+
+    public function setLinks(?array $links): self
+    {
+        $this->links = $links;
 
         return $this;
     }

@@ -38,8 +38,21 @@ class UserController extends AbstractController
      */
     public function usersCollection(UserRepository $userRepository)
     {
-        //Récupération de la liste de tous les users
-        return $this->json($userRepository->findAll(), Response::HTTP_OK, [], ['groups' => 'collection:user']);        
+        //Récupération de la liste de tous les users^
+        $users = array();
+        $i = 0;
+        foreach($userRepository->findAll() as $value){
+            $user = new User;
+            $user = $value;
+            $links['self'] = '/api/users/' . $user->getId();
+            $links['modify'] = '/api/users/' . $user->getId();
+            $links['delete'] = '/api/users/' . $user->getId();
+            $user->setLinks($links);
+            $users[$i] = $user;
+            $i++;
+        }
+        //return $this->json($userRepository->findAll(), Response::HTTP_OK, [], ['groups' => 'collection:user']);
+        return $this->json($users, Response::HTTP_OK, [], ['groups' => 'collection:user']);        
     }
 
     /**
@@ -63,6 +76,11 @@ class UserController extends AbstractController
     public function usersItem(User $user)
     {
         if ($user->getClient() ==  $this->getUser()) {
+
+            $links['modify'] = '/api/users/' . $user->getId();
+            $links['delete'] = '/api/users/' . $user->getId();
+            $user->setLinks($links);
+
             return $this->json($user, Response::HTTP_OK, [], ['groups' => 'item:user']);            
         } else {
             return $this->json(
