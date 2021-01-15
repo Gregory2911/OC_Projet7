@@ -19,6 +19,37 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    /**
+     * return products with limit 
+     *
+     * @param int $page
+     * @param int $limit
+     * @return Paginator
+     */
+    public function findAllByPage(int $limit,int $offset){
+
+        // $entityManager = $this->getEntityManager();
+
+        // $query = $entityManager->createQuery(
+        //     'SELECT p
+        //     FROM App\Entity\Product p
+        //     '
+        // )
+        // ->setMaxResults($limit)
+        // ->setFirstResult($offset);
+
+        // returns an array of Product objects
+        return $this->getEntityManager()
+                    ->createQuery(
+                        'SELECT p
+                        FROM App\Entity\Product p'
+                    )
+                    ->setMaxResults($limit)
+                    ->setFirstResult($offset);
+        // return $query->getResult();
+
+    }
+
     // /**
     //  * @return Product[] Returns an array of Product objects
     //  */

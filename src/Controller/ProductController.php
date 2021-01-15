@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use OpenApi\Annotations as OA;
 use App\Repository\ProductRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
-use OpenApi\Annotations as OA;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -33,11 +34,21 @@ class ProductController extends AbstractController
      * )
      * 
      */
-    public function productsCollection(ProductRepository $productRepository)
+    public function productsCollection(Request $request, ProductRepository $productRepository)
     {
+
+        $page = $request->get('page');
+
+        $limit = 15;
+        if ($page === null || $page < 1){
+            $page = 1;
+        }
+        $offset = ($page - 1) * $limit;
+        
+
         $products = array();
         $i = 0;
-        foreach($productRepository->findAll() as $value){
+        foreach($productRepository->findAllByPage($limit,$offset) as $value){
             $product = new Product;
             $product = $value;
             $links = array();
