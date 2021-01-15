@@ -28,6 +28,8 @@ class Client implements UserInterface
      */
     private $name;
 
+    
+
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -55,11 +57,13 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"connexion"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"connexion"})
      */
     private $password;
 

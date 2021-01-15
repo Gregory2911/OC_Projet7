@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -60,6 +61,7 @@ class Product
 
     /**
      * @Groups({"collection:product"})
+     * @OA\Property(type="array", @OA\Items(type="string"))
      */
     private $links = [];
 

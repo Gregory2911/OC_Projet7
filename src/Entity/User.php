@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Annotations as OA;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -86,6 +87,7 @@ class User
 
     /**
      *
+     * @OA\Property(type="array", @OA\Items(type="string"))
      * @Groups({"collection:user", "item:user"})
      */
     private $links = [];
