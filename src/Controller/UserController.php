@@ -40,6 +40,12 @@ class UserController extends AbstractController
      *     description="Number of the page",
      *     @OA\Schema(type="integer")
      * )
+     * @OA\Parameter(
+     *     name="idClient",
+     *     in="query",
+     *     description="Identifiant du client",
+     *     @OA\Schema(type="integer")
+     * )
      * 
      */
     public function usersCollection(Request $request, UserRepository $userRepository)
@@ -51,12 +57,12 @@ class UserController extends AbstractController
         if ($page === null || $page < 1) {
             $page = 1;
         }
-        $offset = ($page - 1) * $limit;
+        $offset = ($page - 1) * $limit;        
 
-        //Récupération de la liste de tous les users
+        //Retrieving the list of users with optional parameters limit, offset, idClient
         $users = array();
         $i = 0;
-        foreach($userRepository->findAllByPage($limit, $offset) as $value){
+        foreach($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $value){
             $user = new User;
             $user = $value;
             $links['self'] = '/api/users/' . $user->getId();

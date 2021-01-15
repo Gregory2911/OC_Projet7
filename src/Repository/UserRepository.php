@@ -25,18 +25,20 @@ class UserRepository extends ServiceEntityRepository
      * @param int $page
      * @param int $limit
      */
-    public function findAllByPage(int $limit, int $offset)
+    public function findAllByPage(int $limit, int $offset, int $idClient = null)
     {
 
-        // returns an array of User objects
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT u
-                 FROM App\Entity\User u'
-            )
-            ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->getResult();
+        $qb = $this->createQueryBuilder('u')
+                   ->setMaxResults($limit)
+                   ->setFirstResult($offset);
+
+        if ($idClient !== null && $idClient !== 0) {
+            $qb->where('u.client = ?1')
+               ->setParameter(1, $idClient);
+        }
+
+        return $qb->getQuery()->execute();
+        
     }
 
     // /**

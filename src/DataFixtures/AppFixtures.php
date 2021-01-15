@@ -27,6 +27,8 @@ class AppFixtures extends Fixture
 
         $brands = ['samsung', 'apple', 'huawei', 'oppo', 'xiaomi'];
 
+        $clients = ['Orange', 'SFR', 'Bouygues', 'Free'];
+
         //creation of the products
         foreach ($brands as $brand) {
 
@@ -45,29 +47,18 @@ class AppFixtures extends Fixture
         }
 
         //Creation of the clients
-        for ($i = 0; $i < 5; $i++) {
+        foreach($clients as $value) {
 
             $client = new Client();
 
-            if ($i == 0) {
-                $client->setName("Grégory AGNAN")
-                    ->setAdress("01 impasse des jardins de coavou")
-                    ->setCodePostal("22980")
-                    ->setTown("VILDE GUINGALAN")
-                    ->setCountry("FRANCE")
-                    ->setPhoneNumber("0958694425")
-                    ->setEmail("admin@bilemo.com")
-                    ->setPassword($this->encoder->encodePassword($client, "password"));                    
-            } else {
-                $client->setName($faker->company())
-                ->setAdress($faker->streetAddress())
-                ->setCodePostal($faker->postCode())
-                ->setTown($faker->city())
-                ->setCountry($faker->country())
-                ->setPhoneNumber($faker->phoneNumber())
-                ->setEmail($faker->email())
-                ->setPassword($this->encoder->encodePassword($client, "password"));
-            }
+            $client->setName($value)
+            ->setAdress($faker->streetAddress())
+            ->setCodePostal($faker->postCode())
+            ->setTown($faker->city())
+            ->setCountry($faker->country())
+            ->setPhoneNumber($faker->phoneNumber())
+            ->setEmail($value . "@bilemo.com")
+            ->setPassword($this->encoder->encodePassword($client, $value));
 
             $manager->persist($client);
 
