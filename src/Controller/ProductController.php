@@ -32,19 +32,28 @@ class ProductController extends AbstractController
      *        @OA\Items(ref=@Model(type=Product::class, groups={"collection:product"}))
      *     )
      * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Number of the page",
+     *     @OA\Schema(type="integer")
+     * )
      * 
      */
     public function productsCollection(Request $request, ProductRepository $productRepository)
     {
 
+        //configuration of limit and offset parameters
         $page = $request->get('page');
-
         $limit = 15;
         if ($page === null || $page < 1){
             $page = 1;
         }
         $offset = ($page - 1) * $limit;
         
+        //creation of the routes of the previous and next pages to be included in the json
+        // $linkNextPage = '/api/products?page=' . ($page + 1);
+        // $linkPreviousPage = '/api/products?page=' . ($page - 1);
 
         $products = array();
         $i = 0;
@@ -58,9 +67,6 @@ class ProductController extends AbstractController
             $i++;
         }
 
-        //dd($products);
-
-        //return $this->json($productRepository->findAll(), 200, [], ['groups' => 'collection:product']);
         return $this->json($products, 200, [], ['groups' => 'collection:product']);
     }
 

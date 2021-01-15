@@ -34,14 +34,29 @@ class UserController extends AbstractController
      *        @OA\Items(ref=@Model(type=User::class, groups={"collection:user"}))
      *     )
      * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Number of the page",
+     *     @OA\Schema(type="integer")
+     * )
      * 
      */
-    public function usersCollection(UserRepository $userRepository)
+    public function usersCollection(Request $request, UserRepository $userRepository)
     {
-        //Récupération de la liste de tous les users^
+
+        //configuration of limit and offset parameters
+        $page = $request->get('page');
+        $limit = 15;
+        if ($page === null || $page < 1) {
+            $page = 1;
+        }
+        $offset = ($page - 1) * $limit;
+
+        //Récupération de la liste de tous les users
         $users = array();
         $i = 0;
-        foreach($userRepository->findAll() as $value){
+        foreach($userRepository->findAllByPage($limit, $offset) as $value){
             $user = new User;
             $user = $value;
             $links['self'] = '/api/users/' . $user->getId();
@@ -51,7 +66,7 @@ class UserController extends AbstractController
             $users[$i] = $user;
             $i++;
         }
-        //return $this->json($userRepository->findAll(), Response::HTTP_OK, [], ['groups' => 'collection:user']);
+        
         return $this->json($users, Response::HTTP_OK, [], ['groups' => 'collection:user']);        
     }
 

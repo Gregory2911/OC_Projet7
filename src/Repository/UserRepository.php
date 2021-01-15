@@ -19,6 +19,26 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * return users with limit and offset
+     *
+     * @param int $page
+     * @param int $limit
+     */
+    public function findAllByPage(int $limit, int $offset)
+    {
+
+        // returns an array of User objects
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT u
+                 FROM App\Entity\User u'
+            )
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getResult();
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

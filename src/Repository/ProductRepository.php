@@ -20,23 +20,12 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * return products with limit 
+     * return products with limit and offset
      *
      * @param int $page
      * @param int $limit
-     * @return Paginator
      */
     public function findAllByPage(int $limit,int $offset){
-
-        // $entityManager = $this->getEntityManager();
-
-        // $query = $entityManager->createQuery(
-        //     'SELECT p
-        //     FROM App\Entity\Product p
-        //     '
-        // )
-        // ->setMaxResults($limit)
-        // ->setFirstResult($offset);
 
         // returns an array of Product objects
         return $this->getEntityManager()
@@ -45,8 +34,8 @@ class ProductRepository extends ServiceEntityRepository
                         FROM App\Entity\Product p'
                     )
                     ->setMaxResults($limit)
-                    ->setFirstResult($offset);
-        // return $query->getResult();
+                    ->setFirstResult($offset)
+                    ->getResult();
 
     }
 
