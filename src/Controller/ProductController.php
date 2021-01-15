@@ -60,8 +60,8 @@ class ProductController extends AbstractController
         foreach($productRepository->findAllByPage($limit,$offset) as $value){
             $product = new Product;
             $product = $value;
-            $links = array();
-            $links = ['self' => '/api/products/' . $product->getId()];
+            $linkSelf = ['rel' => 'self', 'href' => '/api/products/' . $product->getId(), 'action' => 'GET'];
+            $links = [$linkSelf];
             $product->setLinks($links);
             $products[$i] = $product;
             $i++;

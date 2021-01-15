@@ -57,17 +57,18 @@ class UserController extends AbstractController
         if ($page === null || $page < 1) {
             $page = 1;
         }
-        $offset = ($page - 1) * $limit;        
-
+        $offset = ($page - 1) * $limit;
+        
         //Retrieving the list of users with optional parameters limit, offset, idClient
         $users = array();
         $i = 0;
         foreach($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $value){
             $user = new User;
             $user = $value;
-            $links['self'] = '/api/users/' . $user->getId();
-            $links['modify'] = '/api/users/' . $user->getId();
-            $links['delete'] = '/api/users/' . $user->getId();
+            $linkSelf = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'GET'];
+            $linkUpdate = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'PUT'];
+            $linkDelete = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'DELETE'];
+            $links = [$linkSelf, $linkUpdate, $linkDelete];
             $user->setLinks($links);
             $users[$i] = $user;
             $i++;
@@ -98,8 +99,9 @@ class UserController extends AbstractController
     {
         if ($user->getClient() ==  $this->getUser()) {
 
-            $links['modify'] = '/api/users/' . $user->getId();
-            $links['delete'] = '/api/users/' . $user->getId();
+            $linkUpdate = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'PUT'];
+            $linkDelete = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'DELETE'];
+            $links = [$linkUpdate, $linkDelete];
             $user->setLinks($links);
 
             return $this->json($user, Response::HTTP_OK, [], ['groups' => 'item:user']);            
