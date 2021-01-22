@@ -18,7 +18,7 @@ class SecurityController extends AbstractController
 {
 
     /**
-     * @Route(name="login_check", methods={"GET"})
+     * @Route(name="login_check", methods={"POST"})
      * 
      * @OA\Response(
      *     response=200,

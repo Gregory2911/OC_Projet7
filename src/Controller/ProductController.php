@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Service\LinkCreation;
 use OpenApi\Annotations as OA;
 use App\Repository\ProductRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -20,6 +21,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class ProductController extends AbstractController
 {
+
+    private $linksCreation;
+
+    public function __construct(LinkCreation $linksCreation)
+    {
+        $this->linksCreation = $linksCreation;
+    }
+
     /**
      * Returns the list of products
      * 
@@ -60,9 +69,7 @@ class ProductController extends AbstractController
         foreach($productRepository->findAllByPage($limit,$offset) as $value){
             $product = new Product;
             $product = $value;
-            $linkSelf = ['rel' => 'self', 'href' => '/api/products/' . $product->getId(), 'action' => 'GET'];
-            $links = [$linkSelf];
-            $product->setLinks($links);
+            $product->setLinks($this->linksCreation->getLinks($product->getId(), 1, 0, 0));
             $products[$i] = $product;
             $i++;
         }

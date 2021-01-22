@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\LinkCreation;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -24,6 +25,14 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
  */
 class UserController extends AbstractController
 {
+
+    private $linksCreation;
+
+    public function __construct(LinkCreation $linksCreation)
+    {
+        $this->linksCreation = $linksCreation;
+    }
+
     /**
      * @Route(name="api_users_collection_get", methods={"GET"})
      * @OA\Response(
@@ -61,17 +70,9 @@ class UserController extends AbstractController
         
         //Retrieving the list of users with optional parameters limit, offset, idClient
         $users = array();
-        $i = 0;
-        foreach($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $value){
-            $user = new User;
-            $user = $value;
-            $linkSelf = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'GET'];
-            $linkUpdate = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'PUT'];
-            $linkDelete = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'DELETE'];
-            $links = [$linkSelf, $linkUpdate, $linkDelete];
-            $user->setLinks($links);
-            $users[$i] = $user;
-            $i++;
+        foreach($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $user){            
+            $user->setLinks($this->linksCreation->getLinks($user->getId(),1,1,1));
+            $users[] = $user;            
         }
         
         return $this->json($users, Response::HTTP_OK, [], ['groups' => 'collection:user']);        
@@ -99,10 +100,7 @@ class UserController extends AbstractController
     {
         if ($user->getClient() ==  $this->getUser()) {
 
-            $linkUpdate = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'PUT'];
-            $linkDelete = ['rel' => 'self', 'href' => '/api/users/' . $user->getId(), 'action' => 'DELETE'];
-            $links = [$linkUpdate, $linkDelete];
-            $user->setLinks($links);
+            $user->setLinks($this->linksCreation->getLinks($user->getId(), 0, 1, 1));
 
             return $this->json($user, Response::HTTP_OK, [], ['groups' => 'item:user']);            
         } else {
