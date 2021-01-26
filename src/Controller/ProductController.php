@@ -11,7 +11,7 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @Route("api/products")
@@ -49,7 +49,7 @@ class ProductController extends AbstractController
      * )
      * 
      */
-    public function productsCollection(Request $request, ProductRepository $productRepository)
+    public function productsCollection(Request $request, ProductRepository $productRepository, CacheInterface $cache)
     {
 
         //configuration of limit and offset parameters
@@ -59,22 +59,17 @@ class ProductController extends AbstractController
             $page = 1;
         }
         $offset = ($page - 1) * $limit;
-        
-        //creation of the routes of the previous and next pages to be included in the json
-        // $linkNextPage = '/api/products?page=' . ($page + 1);
-        // $linkPreviousPage = '/api/products?page=' . ($page - 1);
 
-        $products = array();
-        $i = 0;
-        foreach($productRepository->findAllByPage($limit,$offset) as $value){
-            $product = new Product;
-            $product = $value;
-            $product->setLinks($this->linksCreation->getLinks($product->getId(), 1, 0, 0));
-            $products[$i] = $product;
-            $i++;
-        }
+        $json = $cache->get('products' . $page, function() use($productRepository,$offset,$limit){
+            $products = array();
+            foreach($productRepository->findAllByPage($limit,$offset) as $product){
+                $product->setLinks($this->linksCreation->getLinks($product->getId(), 1, 0, 0));
+                $products[] = $product;
+            }
+            return $this->json($products, 200, [], ['groups' => 'collection:product']);
+        });
 
-        return $this->json($products, 200, [], ['groups' => 'collection:product']);
+        return $json;
     }
 
     /**
