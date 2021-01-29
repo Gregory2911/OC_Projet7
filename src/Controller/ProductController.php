@@ -59,7 +59,7 @@ class ProductController extends AbstractController
             $page = 1;
         }
         $offset = ($page - 1) * $limit;
-
+        
         $json = $cache->get('products' . $page, function() use($productRepository,$offset,$limit){
             $products = array();
             foreach($productRepository->findAllByPage($limit,$offset) as $product){
