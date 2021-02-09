@@ -7,11 +7,12 @@ use App\Service\LinkCreation;
 use OpenApi\Annotations as OA;
 use App\Repository\ProductRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @Route("api/products")
@@ -60,7 +61,8 @@ class ProductController extends AbstractController
         }
         $offset = ($page - 1) * $limit;
         
-        $json = $cache->get('products' . $page, function() use($productRepository,$offset,$limit){
+        $json = $cache->get('products' . $page, function(ItemInterface $item) use($productRepository,$offset,$limit){
+            $item->expiresAfter(3600);
             $products = array();
             foreach($productRepository->findAllByPage($limit,$offset) as $product){
                 $product->setLinks($this->linksCreation->getLinks($product->getId(), 1, 0, 0));
