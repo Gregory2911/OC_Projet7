@@ -72,7 +72,7 @@ class UserController extends AbstractController
         //Retrieving the list of users with optional parameters limit, offset, idClient
         $users = array();
         foreach($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $user){            
-            $user->setLinks($this->linksCreation->getLinks($user->getId(),1,1,1));
+            $user->setLinks($this->linksCreation->getLinks($user->getId(),1,1,1,'users'));
             $users[] = $user;            
         }
         
@@ -101,7 +101,7 @@ class UserController extends AbstractController
     {
         if ($user->getClient() ==  $this->getUser()) {
 
-            $user->setLinks($this->linksCreation->getLinks($user->getId(), 0, 1, 1));
+            $user->setLinks($this->linksCreation->getLinks($user->getId(), 0, 1, 1, 'users'));
 
             return $this->json($user, Response::HTTP_OK, [], ['groups' => 'item:user']);            
         } else {

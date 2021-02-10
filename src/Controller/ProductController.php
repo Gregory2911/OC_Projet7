@@ -65,7 +65,7 @@ class ProductController extends AbstractController
             $item->expiresAfter(3600);
             $products = array();
             foreach($productRepository->findAllByPage($limit,$offset) as $product){
-                $product->setLinks($this->linksCreation->getLinks($product->getId(), 1, 0, 0));
+                $product->setLinks($this->linksCreation->getLinks($product->getId(),1,0,0,'products'));
                 $products[] = $product;
             }
             return $this->json($products, 200, [], ['groups' => 'collection:product']);
