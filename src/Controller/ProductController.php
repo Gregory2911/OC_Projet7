@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("api/products")
- * 
+ *
  * @OA\Tag(name="products")
  * @Security(name="Bearer")
  */
@@ -32,7 +32,7 @@ class ProductController extends AbstractController
 
     /**
      * Returns the list of products
-     * 
+     *
      * @Route(name="api_products_collection_get", methods={"GET"})
      * @OA\Response(
      *     response=200,
@@ -48,7 +48,7 @@ class ProductController extends AbstractController
      *     description="Number of the page",
      *     @OA\Schema(type="integer")
      * )
-     * 
+     *
      */
     public function productsCollection(Request $request, ProductRepository $productRepository, CacheInterface $cache)
     {
@@ -56,16 +56,16 @@ class ProductController extends AbstractController
         //configuration of limit and offset parameters
         $page = $request->get('page');
         $limit = 15;
-        if ($page === null || $page < 1){
+        if ($page === null || $page < 1) {
             $page = 1;
         }
         $offset = ($page - 1) * $limit;
         
-        $json = $cache->get('products' . $page, function(ItemInterface $item) use($productRepository,$offset,$limit){
+        $json = $cache->get('products' . $page, function(ItemInterface $item) use($productRepository, $offset, $limit) {
             $item->expiresAfter(3600);
             $products = array();
-            foreach($productRepository->findAllByPage($limit,$offset) as $product){
-                $product->setLinks($this->linksCreation->getLinks($product->getId(),1,0,0,'products'));
+            foreach ($productRepository->findAllByPage($limit, $offset) as $product) {
+                $product->setLinks($this->linksCreation->getLinks($product->getId(), 1, 0, 0, 'products'));
                 $products[] = $product;
             }
             return $this->json($products, 200, [], ['groups' => 'collection:product']);
@@ -76,7 +76,7 @@ class ProductController extends AbstractController
 
     /**
      * Returns the details of a products
-     * 
+     *
      * @Route("/{id}", name="api_products_item_get", methods={"GET"})
      * @OA\Response(
      *     response=200,
@@ -86,7 +86,7 @@ class ProductController extends AbstractController
      *        @OA\Items(ref=@Model(type=Product::class, groups={"item:product"}))
      *     )
      * )
-     * 
+     *
      */
     public function productItem(Product $product)
     {

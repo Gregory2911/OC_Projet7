@@ -34,6 +34,8 @@ class UserController extends AbstractController
     }
 
     /**
+     * Returns the list of users
+     *
      * @Route(name="api_users_collection_get", methods={"GET"})
      * @OA\Response(
      *     response=200,
@@ -55,7 +57,7 @@ class UserController extends AbstractController
      *     description="Identifiant du client",
      *     @OA\Schema(type="integer")
      * )
-     * 
+     *
      */
     public function usersCollection(Request $request, UserRepository $userRepository)
     {
@@ -71,15 +73,17 @@ class UserController extends AbstractController
         
         //Retrieving the list of users with optional parameters limit, offset, idClient
         $users = array();
-        foreach($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $user){            
-            $user->setLinks($this->linksCreation->getLinks($user->getId(),1,1,1,'users'));
-            $users[] = $user;            
+        foreach ($userRepository->findAllByPage($limit, $offset, $request->get('idClient')) as $user) {          
+            $user->setLinks($this->linksCreation->getLinks($user->getId(), 1, 1, 1, 'users'));
+            $users[] = $user;        
         }
         
-        return $this->json($users, Response::HTTP_OK, [], ['groups' => 'collection:user']);        
+        return $this->json($users, Response::HTTP_OK, [], ['groups' => 'collection:user']);    
     }
 
     /**
+     * Returns the details of a user
+     *
      * @Route("/{id}", name="api_users_item_get", methods={"GET"})
      * @OA\Response(
      *     response=200,
@@ -89,13 +93,13 @@ class UserController extends AbstractController
      *        @OA\Items(ref=@Model(type=User::class, groups={"item:user"}))
      *     )
      * )
-     * 
+     *
      * @OA\Response(
      *     response=403,
      *     description="Cet utilisateur est lié à un autre client. Vous ne pouvez voir le détail que de vos utilisateurs."
      * )
-     * 
-     
+     *
+
      */
     public function usersItem(User $user)
     {
@@ -103,18 +107,21 @@ class UserController extends AbstractController
 
             $user->setLinks($this->linksCreation->getLinks($user->getId(), 0, 1, 1, 'users'));
 
-            return $this->json($user, Response::HTTP_OK, [], ['groups' => 'item:user']);            
+            return $this->json($user, Response::HTTP_OK, [], ['groups' => 'item:user']);  
         } else {
             return $this->json(
                 [
                     "status" => 403,
                     "message" => "Cet utilisateur est lié à un autre client. Vous ne pouvez voir le détail que de vos utilisateurs."
-                ], 
-                Response::HTTP_FORBIDDEN);            
+                ],
+                Response::HTTP_FORBIDDEN
+            );        
         }
     }
 
     /**
+     * Adding a user
+     *
      * @Route(name="api_users_item_post", methods={"POST"})
      * @OA\Response(
      *     response=201,
@@ -124,26 +131,26 @@ class UserController extends AbstractController
      *        @OA\Items(ref=@Model(type=User::class, groups={"item:user"}))
      *     )
      * )
-     * 
-     * 
+     *
+     *
      * @OA\Response(
      *     response=400,
      *     description="Error adding the user",
      * )
-     * 
+     *
      
      * 
      */
     public function post(Request $request, SerializerInterface $serializer, EntityManagerInterface $manager, ValidatorInterface $validator)
     {
-        try{
+        try {
             $user = $serializer->deserialize($request->getContent(), User::class, 'json');
 
             $user->setClient($this->getUser());
 
             $errors = $validator->validate($user);
 
-            if(count($errors) > 0){
+            if (count($errors) > 0) {
                 return $this->json($errors, 400);
             }
 
@@ -152,7 +159,7 @@ class UserController extends AbstractController
 
             return $this->json($user, 201, [], ['groups' => 'item:user']);
 
-        } catch(NotEncodableValueException $e){
+        } catch (NotEncodableValueException $e) {
             return $this->json([
                 "status" => 400,
                 "message" => $e->getMessage()
@@ -162,6 +169,8 @@ class UserController extends AbstractController
     }
 
     /**
+     * Update a user
+     *
      * @Route("/{id}", name="api_users_item_put", methods={"PUT"})
      * @OA\Response(
      *     response=200,
@@ -171,13 +180,13 @@ class UserController extends AbstractController
      *        @OA\Items(ref=@Model(type=User::class, groups={"item:user"}))
      *     )
      * )
-     * 
-     * 
+     *
+     *
      * @OA\Response(
      *     response=400,
      *     description="Error updating the user",
      * )
-     * 
+     *
      
      */
     public function put(User $user, Request $request, EntityManagerInterface $manager, SerializerInterface $serializer, ValidatorInterface $validator)
@@ -198,12 +207,14 @@ class UserController extends AbstractController
     }
 
     /**
+     * Delete a user
+     *
      * @Route("/{id}", name="api_users_item_delete", methods={"DELETE"})
      * @OA\Response(
      *     response=204,
      *     description="delete a user",
      * )
-     *      
+     *
      */
     public function delete(User $user, EntityManagerInterface $manager)
     {

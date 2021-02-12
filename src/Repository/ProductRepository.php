@@ -25,7 +25,8 @@ class ProductRepository extends ServiceEntityRepository
      * @param int $page
      * @param int $limit
      */
-    public function findAllByPage(int $limit,int $offset){
+    public function findAllByPage(int $limit, int $offset)
+    {
 
         // returns an array of Product objects
         return $this->getEntityManager()
